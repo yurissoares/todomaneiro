@@ -14,7 +14,7 @@ public class TodoDto {
 
     private Long id;
 
-    @NotBlank(message = "Por favor, preencha a descrição.")
+    @NotBlank(message = "Este campo deve ser preenchido.")
     private String descricao;
 
     @Null(message = "Este campo não deve ser preenchido.")

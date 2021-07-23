@@ -6,9 +6,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.H2Dialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/todomaneiroDB
-    username: postgres
-    password: admin
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false

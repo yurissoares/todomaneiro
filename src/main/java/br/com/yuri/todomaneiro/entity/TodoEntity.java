@@ -3,7 +3,6 @@ package br.com.yuri.todomaneiro.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Data
 @Entity
@@ -14,8 +13,7 @@ public class TodoEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String descricao;
 
     @Column(name = "finished")
