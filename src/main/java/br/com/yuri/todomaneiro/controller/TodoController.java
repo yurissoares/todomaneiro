@@ -1,7 +1,7 @@
 package br.com.yuri.todomaneiro.controller;
 
-import br.com.yuri.todomaneiro.dto.TodoDto;
-import br.com.yuri.todomaneiro.entity.TodoEntity;
+import br.com.yuri.todomaneiro.dto.TodoRequestDto;
+import br.com.yuri.todomaneiro.dto.TodoResponseDto;
 import br.com.yuri.todomaneiro.model.ResponseModel;
 import br.com.yuri.todomaneiro.service.ITodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class TodoController {
     private ITodoService todoService;
 
     @GetMapping
-    public ResponseEntity<ResponseModel<List<TodoEntity>>> listar(@RequestParam(value = "isFinalizado", required = false) final Boolean isFinalizado) {
+    public ResponseEntity<ResponseModel<List<TodoResponseDto>>> listar(@RequestParam(value = "isFinalizado", required = false) final Boolean isFinalizado) {
         if(Objects.nonNull(isFinalizado)){
             return ResponseEntity.status(HttpStatus.OK).body(this.todoService.listarPorStatus(isFinalizado));
         }
@@ -29,18 +29,18 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseModel<TodoEntity>> buscar(@PathVariable final Long id) {
+    public ResponseEntity<ResponseModel<TodoResponseDto>> buscar(@PathVariable final Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(this.todoService.buscar(id));
     }
 
     @PostMapping
-    public ResponseEntity<ResponseModel<TodoEntity>> cadastrar(@Valid @RequestBody final TodoDto todoDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.todoService.cadastrar(todoDto));
+    public ResponseEntity<ResponseModel<Boolean>> cadastrar(@Valid @RequestBody final TodoRequestDto todoRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.todoService.cadastrar(todoRequestDto));
     }
 
     @PutMapping
-    public ResponseEntity<ResponseModel<TodoEntity>> atualizar(@Valid @RequestBody final TodoDto todoDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.todoService.atualizar(todoDto));
+    public ResponseEntity<ResponseModel<Boolean>> atualizar(@Valid @RequestBody final TodoRequestDto todoRequestDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.todoService.atualizar(todoRequestDto));
     }
 
     @DeleteMapping("/{id}")

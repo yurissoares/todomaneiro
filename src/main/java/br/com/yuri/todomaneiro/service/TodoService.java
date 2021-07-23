@@ -1,14 +1,17 @@
 package br.com.yuri.todomaneiro.service;
 
-import br.com.yuri.todomaneiro.dto.TodoDto;
+import br.com.yuri.todomaneiro.dto.TodoRequestDto;
+import br.com.yuri.todomaneiro.dto.TodoResponseDto;
 import br.com.yuri.todomaneiro.entity.TodoEntity;
 import br.com.yuri.todomaneiro.exception.TechnicalException;
 import br.com.yuri.todomaneiro.model.ResponseModel;
 import br.com.yuri.todomaneiro.repository.ITodoRepository;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +30,11 @@ public class TodoService implements ITodoService{
     }
 
     @Override
-    public ResponseModel<List<TodoEntity>> listar() {
-        var response = new ResponseModel<List<TodoEntity>>();
+    public ResponseModel<List<TodoResponseDto>> listar() {
+        var response = new ResponseModel<List<TodoResponseDto>>();
         try {
-            response.setData(this.todoRepository.findAll());
+            final var listTodo = this.todoRepository.findAll();
+            response.setData(mapper.map(listTodo, new TypeToken<List<TodoResponseDto>>() {}.getType()));
             response.setStatusCode(HttpStatus.OK.value());
             return response;
         } catch(Exception e) {
@@ -41,12 +45,12 @@ public class TodoService implements ITodoService{
     }
 
     @Override
-    public ResponseModel<TodoEntity> buscar(final Long id) {
-        var response = new ResponseModel<TodoEntity>();
+    public ResponseModel<TodoResponseDto> buscar(final Long id) {
+        var response = new ResponseModel<TodoResponseDto>();
         try {
             final var todoEntity = this.todoRepository.findById(id);
             if(todoEntity.isPresent()) {
-                response.setData(todoEntity.get());
+                response.setData(mapper.map(todoEntity.get(), TodoResponseDto.class));
                 response.setStatusCode(HttpStatus.OK.value());
                 return response;
             }
@@ -59,12 +63,13 @@ public class TodoService implements ITodoService{
     }
 
     @Override
-    public ResponseModel<TodoEntity> cadastrar(final TodoDto todoDto) {
-        var response = new ResponseModel<TodoEntity>();
+    public ResponseModel<Boolean> cadastrar(final TodoRequestDto todoRequestDto) {
+        var response = new ResponseModel<Boolean>();
         try {
-            todoDto.setFinalizado(Boolean.FALSE);
-            final var todoEntity = this.todoRepository.save(mapper.map(todoDto, TodoEntity.class));
-            response.setData(todoEntity);
+            final var todoEntity = mapper.map(todoRequestDto, TodoEntity.class);
+            todoEntity.setCriadoEm(LocalDateTime.now());
+            this.todoRepository.save(todoEntity);
+            response.setData(Boolean.TRUE);
             response.setStatusCode(HttpStatus.CREATED.value());
             return response;
         } catch (TechnicalException te) {
@@ -75,11 +80,15 @@ public class TodoService implements ITodoService{
     }
 
     @Override
-    public ResponseModel<TodoEntity> atualizar(final TodoDto todoDto) {
-        var response = new ResponseModel<TodoEntity>();
+    public ResponseModel<Boolean> atualizar(final TodoRequestDto todoRequestDto) {
+        var response = new ResponseModel<Boolean>();
         try {
-            if(this.todoRepository.findById(todoDto.getId()).isPresent()){
-                response.setData(this.todoRepository.save(mapper.map(todoDto, TodoEntity.class)));
+            final var todoEntityOptional = this.todoRepository.findById(todoRequestDto.getId());
+            if(todoEntityOptional.isPresent()){
+                final var todoEntity = mapper.map(todoRequestDto, TodoEntity.class);
+                todoEntity.setCriadoEm(todoEntityOptional.get().getCriadoEm());
+                this.todoRepository.save(todoEntity);
+                response.setData(Boolean.TRUE);
                 response.setStatusCode(HttpStatus.OK.value());
                 return response;
             }
@@ -130,10 +139,11 @@ public class TodoService implements ITodoService{
     }
 
     @Override
-    public ResponseModel<List<TodoEntity>> listarPorStatus(final Boolean isFinalizado) {
-        var response = new ResponseModel<List<TodoEntity>>();
+    public ResponseModel<List<TodoResponseDto>> listarPorStatus(final Boolean isFinalizado) {
+        var response = new ResponseModel<List<TodoResponseDto>>();
         try {
-            response.setData(this.todoRepository.findAllByFinalizado(isFinalizado));
+            final var listTodo = this.todoRepository.findAllByFinalizado(isFinalizado);
+            response.setData(mapper.map(listTodo, new TypeToken<List<TodoResponseDto>>() {}.getType()));
             response.setStatusCode(HttpStatus.OK.value());
             return response;
         } catch(Exception e) {

@@ -1,7 +1,7 @@
 package br.com.yuri.todomaneiro.controller;
 
-import br.com.yuri.todomaneiro.dto.UsuarioNewDto;
-import br.com.yuri.todomaneiro.entity.UsuarioEntity;
+import br.com.yuri.todomaneiro.dto.UsuarioResponseDto;
+import br.com.yuri.todomaneiro.dto.UsuarioRequestDto;
 import br.com.yuri.todomaneiro.model.ResponseModel;
 import br.com.yuri.todomaneiro.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +20,23 @@ public class UsuarioController {
     private IUsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<ResponseModel<List<UsuarioEntity>>> listar() {
+    public ResponseEntity<ResponseModel<List<UsuarioResponseDto>>> listar() {
         return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseModel<UsuarioEntity>> buscar(@PathVariable final Long id) {
+    public ResponseEntity<ResponseModel<UsuarioResponseDto>> buscar(@PathVariable final Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.buscar(id));
     }
 
     @PostMapping
-    public ResponseEntity<ResponseModel<UsuarioEntity>> cadastrar(@Valid @RequestBody final UsuarioNewDto usuarioNewDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.usuarioService.cadastrar(usuarioNewDto));
+    public ResponseEntity<ResponseModel<Boolean>> cadastrar(@Valid @RequestBody final UsuarioRequestDto usuarioRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.usuarioService.cadastrar(usuarioRequestDto));
     }
 
     @PutMapping
-    public ResponseEntity<ResponseModel<UsuarioEntity>> atualizar(@Valid @RequestBody final UsuarioNewDto usuarioNewDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.atualizar(usuarioNewDto));
+    public ResponseEntity<ResponseModel<Boolean>> atualizar(@Valid @RequestBody final UsuarioRequestDto usuarioRequestDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.atualizar(usuarioRequestDto));
     }
 
     @DeleteMapping("/{id}")

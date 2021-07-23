@@ -1,11 +1,13 @@
 package br.com.yuri.todomaneiro.service;
 
-import br.com.yuri.todomaneiro.dto.UsuarioNewDto;
+import br.com.yuri.todomaneiro.dto.UsuarioResponseDto;
+import br.com.yuri.todomaneiro.dto.UsuarioRequestDto;
 import br.com.yuri.todomaneiro.entity.UsuarioEntity;
 import br.com.yuri.todomaneiro.exception.TechnicalException;
 import br.com.yuri.todomaneiro.model.ResponseModel;
 import br.com.yuri.todomaneiro.repository.IUsuarioRepository;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,10 +34,10 @@ public class UsuarioService implements IUsuarioService{
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public ResponseModel<List<UsuarioEntity>> listar() {
-        var response = new ResponseModel<List<UsuarioEntity>>();
+    public ResponseModel<List<UsuarioResponseDto>> listar() {
+        var response = new ResponseModel<List<UsuarioResponseDto>>();
         try {
-            response.setData(this.usuarioRepository.findAll());
+            response.setData(mapper.map(this.usuarioRepository.findAll(), new TypeToken<List<UsuarioResponseDto>>() {}.getType()));
             response.setStatusCode(HttpStatus.OK.value());
             return response;
         } catch(Exception e) {
@@ -46,12 +48,12 @@ public class UsuarioService implements IUsuarioService{
     }
 
     @Override
-    public ResponseModel<UsuarioEntity> buscar(final Long id) {
-        var response = new ResponseModel<UsuarioEntity>();
+    public ResponseModel<UsuarioResponseDto> buscar(final Long id) {
+        var response = new ResponseModel<UsuarioResponseDto>();
         try {
             final var usuarioEntity = this.usuarioRepository.findById(id);
             if(usuarioEntity.isPresent()) {
-                response.setData(usuarioEntity.get());
+                response.setData(mapper.map(usuarioEntity.get(), UsuarioResponseDto.class));
                 response.setStatusCode(HttpStatus.OK.value());
                 return response;
             }
@@ -64,12 +66,12 @@ public class UsuarioService implements IUsuarioService{
     }
 
     @Override
-    public ResponseModel<UsuarioEntity> cadastrar(final UsuarioNewDto usuarioNewDto) {
-        var response = new ResponseModel<UsuarioEntity>();
+    public ResponseModel<Boolean> cadastrar(final UsuarioRequestDto usuarioRequestDto) {
+        var response = new ResponseModel<Boolean>();
         try {
-            usuarioNewDto.setSenha(passwordEncoder.encode(usuarioNewDto.getSenha()));
-            final var usuarioEntity = this.usuarioRepository.save(mapper.map(usuarioNewDto, UsuarioEntity.class));
-            response.setData(usuarioEntity);
+            usuarioRequestDto.setSenha(passwordEncoder.encode(usuarioRequestDto.getSenha()));
+            this.usuarioRepository.save(mapper.map(usuarioRequestDto, UsuarioEntity.class));
+            response.setData(Boolean.TRUE);
             response.setStatusCode(HttpStatus.CREATED.value());
             return response;
         } catch (TechnicalException te) {
@@ -80,13 +82,14 @@ public class UsuarioService implements IUsuarioService{
     }
 
     @Override
-    public ResponseModel<UsuarioEntity> atualizar(final UsuarioNewDto usuarioNewDto) {
-        var response = new ResponseModel<UsuarioEntity>();
+    public ResponseModel<Boolean> atualizar(final UsuarioRequestDto usuarioRequestDto) {
+        var response = new ResponseModel<Boolean>();
         try {
-            var usuarioEntity = this.usuarioRepository.findById(usuarioNewDto.getId());
+            var usuarioEntity = this.usuarioRepository.findById(usuarioRequestDto.getId());
             if(usuarioEntity.isPresent()){
-                usuarioNewDto.setSenha(passwordEncoder.encode(usuarioNewDto.getSenha()));
-                response.setData(this.usuarioRepository.save(mapper.map(usuarioNewDto, UsuarioEntity.class)));
+                usuarioRequestDto.setSenha(passwordEncoder.encode(usuarioRequestDto.getSenha()));
+                this.usuarioRepository.save(mapper.map(usuarioRequestDto, UsuarioEntity.class));
+                response.setData(Boolean.TRUE);
                 response.setStatusCode(HttpStatus.OK.value());
                 return response;
             }

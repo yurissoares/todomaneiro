@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class UsuarioDto {
+public class UsuarioRequestDto {
 
     private Long id;
 
@@ -24,6 +24,9 @@ public class UsuarioDto {
     @Email(message = "E-mail inválido.")
     @NotBlank(message = "Este campo deve ser preenchido.")
     private String email;
+
+    @NotBlank(message = "Este campo deve ser preenchido.")
+    private String senha;
 
     @NotNull(message = "Perfil é obrigatório.")
     @Enumerated(EnumType.STRING)
