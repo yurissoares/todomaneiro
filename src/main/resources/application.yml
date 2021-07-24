@@ -1,7 +1,11 @@
 spring:
   profiles:
-    active: dev
+    active: hom
 
 jwt:
   secret: SequenciaDeCaracteresParaAssinarToken
   expiration: 60000
+
+default:
+  sender: ssoares.yuri@gmail.com
+  recipient: ssoares.yuri@gmail.com

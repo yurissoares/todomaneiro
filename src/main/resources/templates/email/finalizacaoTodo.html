@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">Finalização to-do</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div>
+    <h1>To-do id: <span th:text="${todo.getId()}"></span></h1>
+    <p>Criado em: <span th:text="${#temporals.format(todo.getCriadoEm(), 'dd/MM/yyyy HH:mm')}"></span></p>
+    <p>Usuário: <span th:text="${todo.getUsuarioEntity().getNomeCompleto()}"></span></p>
+    <p>Descrição: <span th:text="${todo.getDescricao()}"></span></p>
+    <p>Finalizado: <span th:text="${(todo.getFinalizado())?'Sim':'Não'}"></span></p>
+</div>
+</body>
+</html>

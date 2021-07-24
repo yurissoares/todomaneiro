@@ -2,6 +2,7 @@ package br.com.yuri.todomaneiro.security.service;
 
 import br.com.yuri.todomaneiro.exception.TechnicalException;
 import br.com.yuri.todomaneiro.repository.IUsuarioRepository;
+import br.com.yuri.todomaneiro.service.email.IEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,17 +19,20 @@ public class AuthService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private IEmailService emailService;
+
     private Random rand = new Random();
 
     public void sendNewPassword(final String email) {
         var usuario = this.usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new TechnicalException("Email não encontrado.", HttpStatus.NOT_FOUND));
 
-        var novaSenha = this.newPassword();
-        System.out.println(novaSenha);
+        final var novaSenha = this.newPassword();
         usuario.setSenha(bCryptPasswordEncoder.encode(novaSenha));
-
         this.usuarioRepository.save(usuario);
+
+        this.emailService.sendNewPasswordEmail(usuario, novaSenha);
     }
 
     private String newPassword() {

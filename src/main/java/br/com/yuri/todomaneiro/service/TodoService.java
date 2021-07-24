@@ -9,11 +9,13 @@ import br.com.yuri.todomaneiro.model.ResponseModel;
 import br.com.yuri.todomaneiro.repository.ITodoRepository;
 import br.com.yuri.todomaneiro.repository.IUsuarioRepository;
 import br.com.yuri.todomaneiro.security.service.UserService;
+import br.com.yuri.todomaneiro.service.email.IEmailService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +37,9 @@ public class TodoService implements ITodoService {
 
     @Autowired
     public IUsuarioRepository usuarioRepository;
+
+    @Autowired
+    private IEmailService emailService;
 
     @Override
     public ResponseModel<List<TodoResponseDto>> listar() {
@@ -76,6 +81,7 @@ public class TodoService implements ITodoService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseModel<Boolean> cadastrar(final TodoRequestDto todoRequestDto) {
         var response = new ResponseModel<Boolean>();
@@ -93,6 +99,7 @@ public class TodoService implements ITodoService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseModel<Boolean> atualizar(final TodoRequestDto todoRequestDto) {
         var response = new ResponseModel<Boolean>();
@@ -113,6 +120,7 @@ public class TodoService implements ITodoService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseModel<Boolean> excluir(final Long id) {
         var response = new ResponseModel<Boolean>();
@@ -131,6 +139,7 @@ public class TodoService implements ITodoService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseModel<Boolean> finalizar(final Long id) {
         var response = new ResponseModel<Boolean>();
@@ -142,6 +151,9 @@ public class TodoService implements ITodoService {
             this.todoRepository.save(todoEntity);
             response.setData(Boolean.TRUE);
             response.setStatusCode(HttpStatus.OK.value());
+
+            this.emailService.sendTodoFinalizadoHtmlEmail(todoEntity);
+
             return response;
         } catch (TechnicalException te) {
             throw te;

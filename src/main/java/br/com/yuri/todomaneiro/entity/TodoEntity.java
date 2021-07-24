@@ -29,4 +29,13 @@ public class TodoEntity {
     @JoinColumn(name = "USUARIO_id", nullable = false)
     private UsuarioEntity usuarioEntity;
 
+    @Override
+    public String toString() {
+        return "To-do{" +
+                "id=" + id +
+                ", criadoEm=" + criadoEm +
+                ", descricao='" + descricao + '\'' +
+                ", finalizado=" + finalizado +
+                '}';
+    }
 }
