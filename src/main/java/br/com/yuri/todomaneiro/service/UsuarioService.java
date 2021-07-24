@@ -2,10 +2,13 @@ package br.com.yuri.todomaneiro.service;
 
 import br.com.yuri.todomaneiro.dto.UsuarioResponseDto;
 import br.com.yuri.todomaneiro.dto.UsuarioRequestDto;
+import br.com.yuri.todomaneiro.entity.enums.PerfilUsuario;
 import br.com.yuri.todomaneiro.entity.UsuarioEntity;
+import br.com.yuri.todomaneiro.exception.AuthorizationException;
 import br.com.yuri.todomaneiro.exception.TechnicalException;
 import br.com.yuri.todomaneiro.model.ResponseModel;
 import br.com.yuri.todomaneiro.repository.IUsuarioRepository;
+import br.com.yuri.todomaneiro.security.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,12 @@ public class UsuarioService implements IUsuarioService{
 
     @Override
     public ResponseModel<UsuarioResponseDto> buscar(final Long id) {
+
+        var userSS = UserService.authenticated();
+        if(userSS == null || !userSS.hashRole(PerfilUsuario.ADMIN) && !id.equals(userSS.getId())) {
+            throw new AuthorizationException("Acesso negado.", HttpStatus.FORBIDDEN);
+        }
+
         var response = new ResponseModel<UsuarioResponseDto>();
         try {
             final var usuarioEntity = this.usuarioRepository.findById(id);

@@ -1,6 +1,6 @@
 package br.com.yuri.todomaneiro.dto;
 
-import br.com.yuri.todomaneiro.entity.PerfilUsuario;
+import br.com.yuri.todomaneiro.entity.enums.PerfilUsuario;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

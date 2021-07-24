@@ -1,5 +1,6 @@
 package br.com.yuri.todomaneiro.exception.handler;
 
+import br.com.yuri.todomaneiro.exception.AuthorizationException;
 import br.com.yuri.todomaneiro.exception.TechnicalException;
 import br.com.yuri.todomaneiro.exception.model.ErrorMapResponse;
 import br.com.yuri.todomaneiro.exception.model.ErrorResponse;
@@ -45,4 +46,14 @@ public class ResourceHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMapResponse);
     }
 
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<ErrorResponse> handlerAuthorizationException(AuthorizationException a){
+        var erroResponse = ErrorResponse.builder()
+                .httpStatus(a.getHttpStatus().value())
+                .mensagem(a.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .build();
+
+        return ResponseEntity.status(a.getHttpStatus()).body(erroResponse);
+    }
 }

@@ -7,6 +7,7 @@ import br.com.yuri.todomaneiro.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ public class UsuarioController {
     @Autowired
     private IUsuarioService usuarioService;
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<ResponseModel<List<UsuarioResponseDto>>> listar() {
         return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.listar());
@@ -39,6 +41,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.atualizar(usuarioRequestDto));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseModel<Boolean>> excluir(@PathVariable final Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.excluir(id));

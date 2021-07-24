@@ -1,5 +1,6 @@
 package br.com.yuri.todomaneiro.entity;
 
+import br.com.yuri.todomaneiro.entity.enums.PerfilUsuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
