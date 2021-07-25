@@ -9,11 +9,12 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class TodoRequestDto {
+public class TodoRequestDto implements Serializable {
 
     private Long id;
 

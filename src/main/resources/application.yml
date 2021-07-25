@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: hom
+    active: dev
 
 jwt:
   secret: SequenciaDeCaracteresParaAssinarToken

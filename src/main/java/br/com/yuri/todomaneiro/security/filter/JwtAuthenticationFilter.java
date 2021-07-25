@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         var username = ((UserSS) auth.getPrincipal()).getUsername();
         var token = jwtUtil.generateToken(username);
         response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("access-control-expose-headers", "Authorization");
     }
 
     @Override

@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class UserSS implements UserDetails {
-    private static final long serialVersionUID = 1L;
 
     private Long id;
     private String email;

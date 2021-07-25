@@ -10,11 +10,12 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class UsuarioResponseDto {
+public class UsuarioResponseDto implements Serializable {
 
     private Long id;
 

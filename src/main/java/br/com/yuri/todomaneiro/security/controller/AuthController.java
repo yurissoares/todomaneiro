@@ -29,6 +29,7 @@ public class AuthController {
         var userSS = UserService.authenticated();
         var token = this.jwtUtil.generateToken(userSS.getUsername());
         response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("access-control-expose-headers", "Authorization");
         return ResponseEntity.noContent().build();
     }
 
